@@ -20,6 +20,11 @@ public class GameController {
         return ResponseEntity.ok(gameService.buscarPorId(id));
     }
 
+    @PostMapping
+    public ResponseEntity<GameResponse> criarGame(@RequestBody GameRequest request){
+        return ResponseEntity.ok(gameService.criarGame(request));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<GameResponse> atualizar(@PathVariable Long id, @RequestBody GameRequest request) {
         return ResponseEntity.ok(gameService.atualizarGame(id, request));
