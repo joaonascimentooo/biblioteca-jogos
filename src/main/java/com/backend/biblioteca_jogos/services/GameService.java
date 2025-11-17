@@ -3,8 +3,10 @@ package com.backend.biblioteca_jogos.services;
 import com.backend.biblioteca_jogos.dto.GameRequest;
 import com.backend.biblioteca_jogos.dto.GameResponse;
 import com.backend.biblioteca_jogos.models.Category;
+import com.backend.biblioteca_jogos.models.Developer;
 import com.backend.biblioteca_jogos.models.Game;
 import com.backend.biblioteca_jogos.models.Platform;
+import com.backend.biblioteca_jogos.models.Publisher;
 import com.backend.biblioteca_jogos.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,11 +21,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class GameService {
 
-     private final GameRepository gameRepository;
-     private final CategoryRepository categoryRepository;
-     private final PlatformRepository platformRepository;
-     private final DeveloperRepository developerRepository;
-     private final PublisherRepository publisherRepository;
+    private final GameRepository gameRepository;
+    private final CategoryRepository categoryRepository;
+    private final PlatformRepository platformRepository;
+    private final DeveloperRepository developerRepository;
+    private final PublisherRepository publisherRepository;
 
     public List<GameResponse> listarTodos() {
         return gameRepository.findAll().stream()
@@ -80,6 +82,16 @@ public class GameService {
             game.setPlatforms(new HashSet<>(platforms));
         });
 
+        Optional.ofNullable(request.getDeveloperIds()).ifPresent(ids -> {
+            List<Developer> developers = developerRepository.findAllById(ids);
+            game.setDevelopers(new HashSet<>(developers));
+        });
+
+        Optional.ofNullable(request.getPublisherIds()).ifPresent(ids -> {
+            List<Publisher> publishers = publisherRepository.findAllById(ids);
+            game.setPublishers(new HashSet<>(publishers));
+        });
+
         return new GameResponse(gameRepository.save(game));
     }
 
@@ -110,6 +122,18 @@ public class GameService {
                 .ifPresent(ids -> {
                     List<Platform> platforms = platformRepository.findAllById(ids);
                     game.setPlatforms(new HashSet<>(platforms));
+                });
+
+        Optional.ofNullable(request.getDeveloperIds())
+                .ifPresent(ids -> {
+                    List<Developer> developers = developerRepository.findAllById(ids);
+                    game.setDevelopers(new HashSet<>(developers));
+                });
+
+        Optional.ofNullable(request.getPublisherIds())
+                .ifPresent(ids -> {
+                    List<Publisher> publishers = publisherRepository.findAllById(ids);
+                    game.setPublishers(new HashSet<>(publishers));
                 });
     }
 }
